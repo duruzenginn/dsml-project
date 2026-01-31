@@ -20,7 +20,10 @@ def main() -> None:
         ("tfidf", TfidfVectorizer(
             stop_words="english",
             ngram_range=(1, 2),
-            min_df=2
+            min_df=2,
+            max_df=0.6,
+            max_features=100000,
+            strip_accents=None,
         )),
         ("clf", LogisticRegression(
             C=1.0,
