@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import time
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -49,7 +50,7 @@ def main() -> None:
     char_model = Pipeline([
         ("tfidf", TfidfVectorizer(
             analyzer="char_wb",
-            ngram_range=(3, 5),
+            ngram_range=(4, 6),
             min_df=3,
             sublinear_tf=True,
             max_features=200000,
@@ -62,8 +63,15 @@ def main() -> None:
     ])
 
     # Train both models
+    print("Fitting word_model...")
+    start_time = time.time()
     word_model.fit(X_train, y_train)
+    print(f"Word model trained in {time.time() - start_time:.2f} seconds")
+
+    print("Fitting char_model...")
+    start_time = time.time()
     char_model.fit(X_train, y_train)
+    print(f"Char model trained in {time.time() - start_time:.2f} seconds")
 
     # =========================
     # 4) Load evaluation data
@@ -89,7 +97,7 @@ def main() -> None:
         "Predicted": final_preds
     })
 
-    out_path = "submission_ensemble.csv"
+    out_path = "submission_ensemble_last.csv"
     submission.to_csv(out_path, index=False)
 
     print(f"✅ {out_path} created")
@@ -98,4 +106,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    start = time.time()
     main()
+    print("Elapsed seconds:", round(time.time() - start, 2))
